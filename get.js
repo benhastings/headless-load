@@ -8,28 +8,35 @@
 
 var page = require('webpage').create(),
     system = require('system'),
-    address,t;
+ // read in list of piis
+    fs = require('fs'),
+    filedata = fs.read('piis3k.csv'),
+    piis = filedata.split('\n'),
+ // variable for address & timestamp
+    baseAddress,pii,t;
 var dtm = Date.now();
-address = system.args[1];
 
+// read URL from commandline
+baseAddress = system.args[1];
+pii = system.args[2];
+
+address='http://'+baseAddress+'/science/article/pii/'+pii;
+//console.log(address);
 //adjust viewport size for correct loading/rendering
 page.viewportSize = {width: 1280, height:1024};
 
-//  Capture start time
-t=Date.now();
+  t=Date.now();
 
-page.open(address, function (status) {
-    if (status !== 'success') {
-        console.log('Unable to access network');
-    } else {
+  page.open(address, function (status) {
+      if (status !== 'success') {
+          console.log('Unable to access network');
+      } else {
+          t=Date.now()-t;
+          console.log(t+' pii:'+pii);
 
-//  Capture time and report
-        t=Date.now()-t;
-        console.log('load time is:'+t+' msec');
+  //  Render the page with epochtimestamp
+  //    page.render('test'+dtm+'.png');
 
-//      Render the page with epochtimestamp
-//      page.render('test'+dtm+'.png');
-
-    }
-    phantom.exit();
-});
+      }
+      phantom.exit();
+  });//end page.open
